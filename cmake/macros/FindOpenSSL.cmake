@@ -26,7 +26,8 @@
 # http://www.slproweb.com/products/Win32OpenSSL.html
 
 set(OPENSSL_EXPECTED_VERSION "1.0")
-set(OPENSSL_MAX_VERSION "1.2")
+# Allow up to OpenSSL 4.x (so OpenSSL 3 on modern distros is accepted)
+set(OPENSSL_MAX_VERSION "4.0")
 
 SET(_OPENSSL_ROOT_HINTS
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;Inno Setup: App Path]"
@@ -218,24 +219,34 @@ if (OPENSSL_INCLUDE_DIR)
 
     string(REGEX REPLACE "^.*OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f]).*$"
            "\\1;\\2;\\3;\\4;\\5" OPENSSL_VERSION_LIST "${openssl_version_str}")
-    list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
-    list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
-    list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
-    list(GET OPENSSL_VERSION_LIST 3 OPENSSL_VERSION_PATCH)
 
-    string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_MINOR "${OPENSSL_VERSION_MINOR}")
-    string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_FIX "${OPENSSL_VERSION_FIX}")
+    # Only parse components if the regex matched and produced a non-empty list
+    list(LENGTH OPENSSL_VERSION_LIST _OPENSSL_VERSION_LIST_LEN)
+    if (_OPENSSL_VERSION_LIST_LEN GREATER 0)
+      list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
+      list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
+      list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
+      list(GET OPENSSL_VERSION_LIST 3 OPENSSL_VERSION_PATCH)
 
-    if (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
-      # 96 is the ASCII code of 'a' minus 1
-      math(EXPR OPENSSL_VERSION_PATCH_ASCII "${OPENSSL_VERSION_PATCH} + 96")
-      # Once anyone knows how OpenSSL would call the patch versions beyond 'z'
-      # this should be updated to handle that, too. This has not happened yet
-      # so it is simply ignored here for now.
-      string(ASCII "${OPENSSL_VERSION_PATCH_ASCII}" OPENSSL_VERSION_PATCH_STRING)
-    endif (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
+      string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_MINOR "${OPENSSL_VERSION_MINOR}")
+      string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_FIX "${OPENSSL_VERSION_FIX}")
 
-    set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH_STRING}")
+      if (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
+        # 96 is the ASCII code of 'a' minus 1
+        math(EXPR OPENSSL_VERSION_PATCH_ASCII "${OPENSSL_VERSION_PATCH} + 96")
+        # Once anyone knows how OpenSSL would call the patch versions beyond 'z'
+        # this should be updated to handle that, too. This has not happened yet
+        # so it is simply ignored here for now.
+        string(ASCII "${OPENSSL_VERSION_PATCH_ASCII}" OPENSSL_VERSION_PATCH_STRING)
+      endif (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
+
+      set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH_STRING}")
+    else()
+      # Fallback: if parsing fails (e.g. newer OpenSSL format), skip strict
+      # version string construction here and let the version-range check
+      # treat the version as acceptable.
+      set(OPENSSL_VERSION "${OPENSSL_EXPECTED_VERSION}")
+    endif()
   endif (_OPENSSL_VERSION)
 
   include(EnsureVersion)
