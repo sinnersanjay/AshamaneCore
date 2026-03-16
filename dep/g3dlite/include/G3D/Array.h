@@ -1129,7 +1129,7 @@ return( lhs < rhs? true : false );
         if (direction == SORT_INCREASING) {
             std::sort(data, data + num);
         } else {
-            std::sort(data, data + num, compareGT);
+            std::sort(data, data + num, &Array::compareGT);
         }
     }
 
@@ -1140,7 +1140,7 @@ return( lhs < rhs? true : false );
         if (direction == SORT_INCREASING) {
             std::sort(data + beginIndex, data + endIndex + 1);
         } else {
-            std::sort(data + beginIndex, data + endIndex + 1, compareGT);
+            std::sort(data + beginIndex, data + endIndex + 1, &Array::compareGT);
         }
     }
 

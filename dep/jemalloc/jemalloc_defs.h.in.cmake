@@ -46,7 +46,13 @@
  * Hyper-threaded CPUs may need a special instruction inside spin loops in
  * order to yield to another virtual CPU.
  */
+#if defined(__i386__) || defined(__x86_64__)
 #define CPU_SPINWAIT __asm__ volatile("pause")
+#elif defined(__aarch64__) || defined(__arm__)
+#define CPU_SPINWAIT __asm__ volatile("yield")
+#else
+#define CPU_SPINWAIT do { } while (0)
+#endif
 
 /* Defined if the equivalent of FreeBSD's atomic(9) functions are available. */
 /* #undef JEMALLOC_ATOMIC9 */
