@@ -207,8 +207,10 @@ if (OPENSSL_INCLUDE_DIR)
   if (_OPENSSL_VERSION)
     set(OPENSSL_VERSION "${_OPENSSL_VERSION}")
   else (_OPENSSL_VERSION)
+    # OpenSSL 1.x used 0xMNNFFPPS (typically 8 hex digits), OpenSSL 3.x still
+    # defines OPENSSL_VERSION_NUMBER but the exact formatting can vary.
     file(STRINGS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h" openssl_version_str
-         REGEX "^# *define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x[0-9][0-9][0-9][0-9][0-9][0-9].*")
+         REGEX "^# *define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x[0-9a-fA-F]+.*")
 
     # The version number is encoded as 0xMNNFFPPS: major minor fix patch status
     # The status gives if this is a developer or prerelease and is ignored here.
@@ -217,12 +219,12 @@ if (OPENSSL_INCLUDE_DIR)
     # indicates the bug fix state, which 00 -> nothing, 01 -> a, 02 -> b and so
     # on.
 
-    string(REGEX REPLACE "^.*OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f]).*$"
+    string(REGEX REPLACE "^.*OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F]).*$"
            "\\1;\\2;\\3;\\4;\\5" OPENSSL_VERSION_LIST "${openssl_version_str}")
 
-    # Only parse components if the regex matched and produced a non-empty list
+    # Only parse components if the regex matched and produced all 5 fields
     list(LENGTH OPENSSL_VERSION_LIST _OPENSSL_VERSION_LIST_LEN)
-    if (_OPENSSL_VERSION_LIST_LEN GREATER 0)
+    if (_OPENSSL_VERSION_LIST_LEN EQUAL 5)
       list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
       list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
       list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
@@ -242,10 +244,9 @@ if (OPENSSL_INCLUDE_DIR)
 
       set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH_STRING}")
     else()
-      # Fallback: if parsing fails (e.g. newer OpenSSL format), skip strict
-      # version string construction here and let the version-range check
-      # treat the version as acceptable.
-      set(OPENSSL_VERSION "${OPENSSL_EXPECTED_VERSION}")
+      # Fallback: if parsing fails, accept the detected OpenSSL and avoid
+      # crashing in version normalization.
+      set(OPENSSL_VERSION "${OPENSSL_EXPECTED_VERSION}.0")
     endif()
   endif (_OPENSSL_VERSION)
 
