@@ -22,8 +22,10 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#ifndef BOOST_BIND_GLOBAL_PLACEHOLDERS
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
+#endif
 #include <boost/bind/bind.hpp>
-using namespace boost::placeholders;
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
