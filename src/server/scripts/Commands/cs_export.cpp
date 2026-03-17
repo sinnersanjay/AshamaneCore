@@ -244,7 +244,7 @@ public:
     /// </summary>
     /// <param name="aInput">Cadena de entrada.</param>
     /// <return>Cadena con los caracteres sustituidos.</return>
-    std::string SafeSQLParams(std::string &aInput)
+    std::string SafeSQLParams(const std::string &aInput)
     {
         std::ostringstream _aFirst;
         std::ostringstream _aSecond;
