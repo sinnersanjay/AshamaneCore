@@ -1708,23 +1708,21 @@ void System::cpuid(CPUIDFunction func, uint32& eax, uint32& ebx, uint32& ecx, ui
 // for a discussion of why the second version saves ebx; it allows 32-bit code to compile with the -fPIC option.
 // On 64-bit x86, PIC code has a dedicated rip register for PIC so there is no ebx conflict.
 void System::cpuid(CPUIDFunction func, uint32& eax, uint32& ebx, uint32& ecx, uint32& edx) {
+    uint32 a = 0, b = 0, c = 0, d = 0;
 #if defined(__x86_64__)
     asm volatile(
-        "xchgq %%rbx, %q1  \n\t"
-        "movl  $0, %%ecx   \n\t"
-        "cpuid             \n\t"
-        "xchgq %%rbx, %q1  \n\t"
-        : "=a"(eax), "=r"(ebx), "=c"(ecx), "=d"(edx)
-        : "0"(func));
+        "cpuid"
+        : "=a"(a), "=b"(b), "=c"(c), "=d"(d)
+        : "a"(func), "c"(0));
 #else
     asm volatile(
         "xchgl %%ebx, %1   \n\t"
-        "movl  $0, %%ecx   \n\t"
         "cpuid             \n\t"
         "xchgl %%ebx, %1   \n\t"
-        : "=a"(eax), "=r"(ebx), "=c"(ecx), "=d"(edx)
-        : "0"(func));
+        : "=a"(a), "=r"(b), "=c"(c), "=d"(d)
+        : "a"(func), "c"(0));
 #endif
+    eax = a; ebx = b; ecx = c; edx = d;
 }
 
 #endif
