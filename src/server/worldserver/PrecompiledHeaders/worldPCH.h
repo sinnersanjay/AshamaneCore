@@ -15,6 +15,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Must be defined before any Boost headers to avoid boost::placeholders errors with Boost 1.73+
+#ifndef BOOST_BIND_GLOBAL_PLACEHOLDERS
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
+#endif
+
+// Must be included before any other OpenSSL headers to ensure CRYPTO_RWLOCK is declared
+#include <openssl/crypto.h>
+
 #include "Common.h"
 #include "World.h"
 #include "Log.h"
