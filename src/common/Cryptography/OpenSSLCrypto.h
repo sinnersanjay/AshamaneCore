@@ -14,12 +14,9 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef OPENSSL_CRYPTO_H
-#define OPENSSL_CRYPTO_H
-
+#ifndef TRINITY_OPENSSL_CRYPTO_H
+#define TRINITY_OPENSSL_CRYPTO_H
 #include "Define.h"
-
 /**
 * A group of functions which setup openssl crypto module to work properly in multithreaded enviroment
 * If not setup properly - it will crash
@@ -31,5 +28,4 @@ namespace OpenSSLCrypto
     /// Needs to be called after threads using openssl are despawned
     TC_COMMON_API void threadsCleanup();
 }
-
 #endif
