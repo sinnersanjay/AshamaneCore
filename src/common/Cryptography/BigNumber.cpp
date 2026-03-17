@@ -17,6 +17,7 @@
 
 #include "Cryptography/BigNumber.h"
 #include "Errors.h"
+#include <openssl/crypto.h>
 #include <openssl/bn.h>
 #include <cstring>
 #include <algorithm>

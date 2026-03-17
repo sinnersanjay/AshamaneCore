@@ -22,6 +22,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <boost/bind/bind.hpp>
+using namespace boost::placeholders;
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
