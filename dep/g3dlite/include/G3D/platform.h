@@ -282,6 +282,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #       ifndef __stdcall
 #           define __stdcall
 #       endif
+#   else
+        // Non-x86 architectures (ARM, ARM64, etc.) don't support __cdecl/__stdcall
+#       ifndef __cdecl
+#           define __cdecl
+#       endif
+
+#       ifndef __stdcall
+#           define __stdcall
+#       endif
 #   endif // calling conventions
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()

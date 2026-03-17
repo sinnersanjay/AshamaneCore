@@ -21,6 +21,7 @@
 #include "G3D/FileSystem.h"
 #include <deque>
 #include <iostream>
+#include <algorithm>
 
 namespace G3D {
 const char* Any::PAREN   = "()";
@@ -1047,7 +1048,7 @@ void Any::serialize(TextOutput& to, bool json, bool coerce) const {
         AnyTable& table = *(m_data->value.t);
         Array<std::string> keys;
         table.getKeys(keys);
-        keys.sort();
+        std::sort(keys.begin(), keys.end());
 
         for (int i = 0; i < keys.size(); ++i) {
 
@@ -1313,11 +1314,11 @@ void Any::deserialize(TextInput& ti, Token& token) {
             // Update the source information
             ensureData();
             if (! comment.empty()) {
-                m_data->includeLine = format("\n/* %s */\n", comment.c_str());
+                m_data->includeLine = G3D::format("\n/* %s */\n", comment.c_str());
             }
-            m_data->includeLine += format("#include(\"%s\")", includeName.c_str());
+            m_data->includeLine += G3D::format("#include(\"%s\")", includeName.c_str());
             m_data->source.filename +=
-                format(" [included from %s:%d(%d)]", ti.filename().c_str(), token.line(), token.character());
+                G3D::format(" [included from %s:%d(%d)]", ti.filename().c_str(), token.line(), token.character());
             
             ti.readSymbol(")");
 
@@ -1757,7 +1758,7 @@ void Any::verifySize(int low, int high) const {
     beforeRead();
     verifyType(ARRAY, TABLE);
     if (size() < low || size() > high) {
-        verify(false, format("Size must be between %d and %d", low, high));
+        verify(false, G3D::format("Size must be between %d and %d", low, high));
     }
 }
 
@@ -1766,7 +1767,7 @@ void Any::verifySize(int s) const {
     beforeRead();
     verifyType(ARRAY, TABLE);
     if (size() != s) {
-        verify(false, format("Size must be %d", s));
+        verify(false, G3D::format("Size must be %d", s));
     }
 }
 

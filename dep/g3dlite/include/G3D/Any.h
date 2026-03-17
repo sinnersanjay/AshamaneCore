@@ -389,7 +389,7 @@ public:
                 line      = data->source.line;
                 character = data->source.character;
             }
-            message = format("Index out of bounds: index = %d, array size = %d", i, s);
+            message = G3D::format("Index out of bounds: index = %d, array size = %d", i, s);
         }
     };
 
