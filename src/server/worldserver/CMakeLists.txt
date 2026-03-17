@@ -37,6 +37,9 @@ if( NOT WIN32 )
   )
 endif()
 
+# Boost 1.73+ requires this to avoid boost::placeholders namespace errors
+target_compile_definitions(worldserver PRIVATE BOOST_BIND_GLOBAL_PLACEHOLDERS)
+
 if( UNIX AND NOT NOJEM AND NOT APPLE )
   set(worldserver_LINK_FLAGS "-pthread -lncurses ${worldserver_LINK_FLAGS}")
 endif()
