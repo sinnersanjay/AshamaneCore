@@ -431,7 +431,7 @@ inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
 #endif // RAPIDJSON_SSE2
 #endif // x86 only
 
-#ifdef RAPIDJSON_SIMD
+#if defined(RAPIDJSON_SIMD) && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64))
 //! Template function specialization for InsituStringStream
 template<> inline void SkipWhitespace(InsituStringStream& is) {
     is.src_ = const_cast<char*>(SkipWhitespace_SIMD(is.src_));

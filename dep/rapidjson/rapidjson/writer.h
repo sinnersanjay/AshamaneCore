@@ -536,7 +536,7 @@ inline bool Writer<StringBuffer>::WriteDouble(double d) {
     return true;
 }
 
-#if defined(RAPIDJSON_SSE2) || defined(RAPIDJSON_SSE42)
+#if (defined(RAPIDJSON_SSE2) || defined(RAPIDJSON_SSE42)) && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64))
 template<>
 inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, size_t length) {
     if (length < 16)
