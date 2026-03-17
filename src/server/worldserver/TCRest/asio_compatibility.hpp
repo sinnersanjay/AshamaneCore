@@ -43,14 +43,14 @@ namespace SimpleWeb {
     return asio::ip::make_address(str);
   }
   template <typename socket_type>
-  asio::executor get_socket_executor(socket_type &socket) {
+  auto get_socket_executor(socket_type &socket) -> decltype(socket.get_executor()) {
     return socket.get_executor();
   }
   template <typename handler_type>
   void async_resolve(asio::ip::tcp::resolver &resolver, const std::pair<std::string, std::string> &host_port, handler_type &&handler) {
     resolver.async_resolve(host_port.first, host_port.second, std::forward<handler_type>(handler));
   }
-  inline asio::executor_work_guard<io_context::executor_type> make_work_guard(io_context &context) {
+  inline auto make_work_guard(io_context &context) -> decltype(asio::make_work_guard(context)) {
     return asio::make_work_guard(context);
   }
 #else

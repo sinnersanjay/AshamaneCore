@@ -430,10 +430,10 @@ namespace SimpleWeb {
       accept();
 
       if(internal_io_service && io_service->stopped())
-        restart(*io_service);
+        io_service->restart();
 
       if(callback)
-        post(*io_service, [callback, port] {
+        asio::post(*io_service, [callback, port] {
           callback(port);
         });
 
