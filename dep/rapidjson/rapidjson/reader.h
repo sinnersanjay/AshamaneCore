@@ -278,6 +278,7 @@ inline const char* SkipWhitespace(const char* p, const char* end) {
     return p;
 }
 
+#if defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)
 #ifdef RAPIDJSON_SSE42
 //! Skip whitespace with SSE 4.2 pcmpistrm instruction, testing 16 8-byte characters at once.
 inline const char *SkipWhitespace_SIMD(const char* p) {
@@ -428,6 +429,7 @@ inline const char *SkipWhitespace_SIMD(const char* p, const char* end) {
 }
 
 #endif // RAPIDJSON_SSE2
+#endif // x86 only
 
 #ifdef RAPIDJSON_SIMD
 //! Template function specialization for InsituStringStream
@@ -911,7 +913,7 @@ private:
             // Do nothing for generic version
     }
 
-#if defined(RAPIDJSON_SSE2) || defined(RAPIDJSON_SSE42)
+#if (defined(RAPIDJSON_SSE2) || defined(RAPIDJSON_SSE42)) && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64))
     // StringStream -> StackStream<char>
     static RAPIDJSON_FORCEINLINE void ScanCopyUnescapedString(StringStream& is, StackStream<char>& os) {
         const char* p = is.src_;
