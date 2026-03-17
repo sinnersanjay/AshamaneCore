@@ -38,9 +38,6 @@
 //#define NO_BUFFERPOOL
 
 #include <cstdlib>
-#ifdef G3D_LINUX
-#   include <cpuid.h>
-#endif
 
 #ifdef G3D_WINDOWS
 
@@ -1711,11 +1708,23 @@ void System::cpuid(CPUIDFunction func, uint32& eax, uint32& ebx, uint32& ecx, ui
 // for a discussion of why the second version saves ebx; it allows 32-bit code to compile with the -fPIC option.
 // On 64-bit x86, PIC code has a dedicated rip register for PIC so there is no ebx conflict.
 void System::cpuid(CPUIDFunction func, uint32& eax, uint32& ebx, uint32& ecx, uint32& edx) {
-    // Use GCC/Clang built-in cpuid intrinsic -- works on 32-bit and 64-bit,
-    // PIC and non-PIC, without manual ebx save/restore asm.
-    unsigned int a = 0, b = 0, c = 0, d = 0;
-    __get_cpuid(static_cast<unsigned int>(func), &a, &b, &c, &d);
-    eax = a; ebx = b; ecx = c; edx = d;
+#if defined(__x86_64__)
+    asm volatile(
+        "xchgq %%rbx, %q1  \n\t"
+        "movl  $0, %%ecx   \n\t"
+        "cpuid             \n\t"
+        "xchgq %%rbx, %q1  \n\t"
+        : "=a"(eax), "=r"(ebx), "=c"(ecx), "=d"(edx)
+        : "0"(func));
+#else
+    asm volatile(
+        "xchgl %%ebx, %1   \n\t"
+        "movl  $0, %%ecx   \n\t"
+        "cpuid             \n\t"
+        "xchgl %%ebx, %1   \n\t"
+        : "=a"(eax), "=r"(ebx), "=c"(ecx), "=d"(edx)
+        : "0"(func));
+#endif
 }
 
 #endif
