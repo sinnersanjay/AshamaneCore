@@ -8,5 +8,6 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+add_subdirectory(genrev)
 add_subdirectory(common)
 add_subdirectory(server)
