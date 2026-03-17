@@ -3143,7 +3143,7 @@ public:
         return true;
     }
 
-    void FlushToFile(std::string &aFileName, int aEntry, std::string &aCreatureName)
+    void FlushToFile(const std::string &aFileName, int aEntry, const std::string &aCreatureName)
     {
         time_t _CurTime = time(NULL);
         tm* _LocalTm = localtime(&_CurTime);
@@ -5399,12 +5399,7 @@ public:
         {
             uint64 _Entry;
 
-            // strtoull doesn't exist on WIN
-#if PLATFORM == PLATFORM_WINDOWS
-            _Entry = _strtoui64(( char* )aArgs, NULL, 10);
-#else
             _Entry = strtoull(( char* )aArgs, NULL, 10);
-#endif
 
             CommandExportCreature _Export(aHandler);
             _Export.ExportToSQLFile(_Entry);
