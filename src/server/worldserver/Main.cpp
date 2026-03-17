@@ -48,10 +48,10 @@
 #include "TCSoap.h"
 #include "RESTService.h"
 #include "World.h"
+#include <openssl/crypto.h>
+#include <openssl/opensslv.h>
 #include "WorldSocket.h"
 #include "WorldSocketMgr.h"
-#include <openssl/opensslv.h>
-#include <openssl/crypto.h>
 #include <boost/asio/signal_set.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/program_options.hpp>
