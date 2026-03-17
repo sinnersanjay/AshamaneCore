@@ -29,11 +29,13 @@
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward)
 #endif
+#if defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)
 #ifdef RAPIDJSON_SSE42
 #include <nmmintrin.h>
 #elif defined(RAPIDJSON_SSE2)
 #include <emmintrin.h>
 #endif
+#endif // x86 only
 
 #ifdef _MSC_VER
 RAPIDJSON_DIAG_PUSH
